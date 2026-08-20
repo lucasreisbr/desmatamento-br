@@ -6,33 +6,47 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if viewModel.taxasFiltradas.isEmpty {
+                switch viewModel.estado {
+                case .carregando:
+                    ProgressView("Carregando dados...")
+                case .erro(let mensagem):
                     ContentUnavailableView(
-                        "Nenhum bioma encontrado",
-                        systemImage: "leaf.fill",
-                        description: Text("Tente buscar por \"Amazônia\" ou \"Cerrado\".")
+                        "Erro ao carregar",
+                        systemImage: "wifi.slash",
+                        description: Text(mensagem)
                     )
-                } else {
-                    List(viewModel.taxasFiltradas) { taxa in
-                        NavigationLink(value: taxa) {
-                            linha(para: taxa)
+                case .carregado:
+                    if viewModel.taxasFiltradas.isEmpty {
+                        ContentUnavailableView(
+                            "Nenhum bioma encontrado",
+                            systemImage: "leaf.fill",
+                            description: Text("Tente buscar por \"Amazônia\" ou \"Cerrado\".")
+                        )
+                    } else {
+                        List(viewModel.taxasFiltradas) { taxa in
+                            NavigationLink(value: taxa) {
+                                linha(para: taxa)
+                            }
                         }
                     }
                 }
             }
+            .task {
+                await viewModel.carregar()
+            }
             .navigationDestination(for: TaxaDesmatamento.self) { taxa in
-                BiomaDetailView(taxa: taxa)
+                BiomaDetailView(taxa: taxa, viewModel: viewModel)
             }
             .searchable(text: $viewModel.busca, prompt: "Buscar bioma...")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     VStack(alignment: .leading, spacing: 0) {
-                        Text("Desmatamento")
-                        Text("no Brasil")
+                        Text("Desmatamento Brasil")
+                        //Text("no Brasil")
                     }
-                    .font(.largeTitle)
-                    .padding(.top, 30)
+                    .font(.title)
+                    .padding(.top, 10)
                 }
             }
         }

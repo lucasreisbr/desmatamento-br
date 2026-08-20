@@ -26,7 +26,7 @@ enum Bioma: String, CaseIterable, Identifiable, Codable {
         case .pampa: return .yellow
         }
     }
-
+    
     var descricaoCurta: String {
         switch self {
         case .amazonia: return "Maior floresta tropical do mundo"
@@ -35,6 +35,19 @@ enum Bioma: String, CaseIterable, Identifiable, Codable {
         case .caatinga: return "Único bioma exclusivamente brasileiro"
         case .pantanal: return "Maior planície alagável do mundo"
         case .pampa: return "Campos e coxilhas do extremo sul"
+        }
+    }
+}
+
+extension Bioma {
+    var typeNameWFS: String {
+        switch self {
+        case .amazonia: return "prodes-amazon-nb:yearly_deforestation_biome"
+        case .cerrado: return "prodes-cerrado-nb:yearly_deforestation"
+        case .mataAtlantica: return "prodes-mata-atlantica-nb:yearly_deforestation"
+        case .caatinga: return "prodes-caatinga-nb:yearly_deforestation"
+        case .pantanal: return "prodes-pantanal-nb:yearly_deforestation"
+        case .pampa: return "prodes-pampa-nb:yearly_deforestation"
         }
     }
 }

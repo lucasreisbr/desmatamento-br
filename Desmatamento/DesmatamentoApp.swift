@@ -11,7 +11,8 @@ import SwiftUI
 struct DesmatamentoApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
     }
 }
+
