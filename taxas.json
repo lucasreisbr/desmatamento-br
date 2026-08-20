@@ -1,0 +1,8 @@
+[
+  { "bioma": "Amazônia", "ano": 2024, "areaKm2": 6288 },
+  { "bioma": "Cerrado", "ano": 2024, "areaKm2": 6392 },
+  { "bioma": "Mata Atlântica", "ano": 2024, "areaKm2": 187 },
+  { "bioma": "Caatinga", "ano": 2024, "areaKm2": 411 },
+  { "bioma": "Pantanal", "ano": 2024, "areaKm2": 52 },
+  { "bioma": "Pampa", "ano": 2024, "areaKm2": 33 }
+]
