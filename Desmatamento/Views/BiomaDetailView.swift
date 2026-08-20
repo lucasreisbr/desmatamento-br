@@ -1,7 +1,15 @@
 import SwiftUI
+import Charts
 
 struct BiomaDetailView: View {
     let taxa: TaxaDesmatamento
+    let viewModel: FiltroViewModel
+
+    private var historicoDoBioma: [TaxaDesmatamento] {
+        viewModel.historico
+            .filter { $0.bioma == taxa.bioma }
+            .sorted { $0.ano < $1.ano }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -33,21 +41,30 @@ struct BiomaDetailView: View {
 
             Spacer()
 
-            // Placeholder: na Semana 2 entra um gráfico (Swift Charts)
-            // com o histórico multi-ano deste bioma, usando
-            // MockData.historicoAmazonia como referência de formato.
-            Text("📈 Gráfico de evolução histórica entra aqui na Semana 2")
-                .font(.footnote)
-                .foregroundStyle(.tertiary)
+            if historicoDoBioma.isEmpty {
+                ProgressView("Carregando histórico...")
+            } else {
+                Chart(historicoDoBioma) { ponto in
+                    BarMark(
+                        x: .value("Ano", String(ponto.ano)),
+                        y: .value("Área", ponto.areaKm2)
+                    )
+                    .foregroundStyle(taxa.bioma.corRepresentativa)
+                }
+                .frame(height: 180)
+            }
         }
         .padding()
         .navigationTitle(taxa.bioma.rawValue)
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            await viewModel.carregarHistorico()
+        }
     }
 }
 
 #Preview {
     NavigationStack {
-        BiomaDetailView(taxa: MockData.taxasRecentes[0])
+        BiomaDetailView(taxa: MockData.taxasRecentes[0], viewModel: FiltroViewModel())
     }
 }

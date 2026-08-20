@@ -1,22 +1,30 @@
 import Foundation
 
-/// Um ponto de dado: área desmatada de um bioma em um ano específico.
-/// Struct (value type) porque isso é um dado imutável que só carregamos
-/// e exibimos — não precisamos de identidade de referência (class) aqui.
 struct TaxaDesmatamento: Identifiable, Codable, Hashable {
     let id: UUID
     let bioma: Bioma
     let ano: Int
     let areaKm2: Double
 
-    // Inicializador customizado: geramos o UUID automaticamente para
-    // dado mockado, mas ainda permitimos Codable decodificar de JSON
-    // real (onde o `id` pode não vir no payload — trataremos isso
-    // na Semana 2 com CodingKeys).
     init(id: UUID = UUID(), bioma: Bioma, ano: Int, areaKm2: Double) {
         self.id = id
         self.bioma = bioma
         self.ano = ano
         self.areaKm2 = areaKm2
+    }
+
+    // Diz ao Codable pra NÃO esperar "id" no JSON
+    enum CodingKeys: String, CodingKey {
+        case bioma, ano, areaKm2
+    }
+
+    // Decoder customizado: gera um UUID novo pra cada item decodificado,
+    // já que o JSON não traz id nenhum.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = UUID()
+        self.bioma = try container.decode(Bioma.self, forKey: .bioma)
+        self.ano = try container.decode(Int.self, forKey: .ano)
+        self.areaKm2 = try container.decode(Double.self, forKey: .areaKm2)
     }
 }
